@@ -1,0 +1,21 @@
+#!/usr/bin/ruby
+require 'rubygems'
+require 'daemons'
+
+callpath = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH << callpath
+
+PIDDIR='/tmp'
+
+callpath = File.expand_path(File.dirname(__FILE__))
+
+app_options = {
+  :dir_mode => :normal,
+  :dir => PIDDIR,
+}
+
+Daemons.run_proc("schedulerd", app_options) do
+  require 'sched'
+  Runner.run
+end
+
