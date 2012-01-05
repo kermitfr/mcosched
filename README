@@ -1,9 +1,15 @@
 - Installation 
-As root :
+git clone https://github.com/thinkfr/mcosched.git
 
+sudo su
+
+cd mcosched
+
+yum -y install ruby-devel make gcc-c++
 gem install tzinfo
 gem install eventmachine
 gem install rufus-scheduler
+gem install daemons 
 gem install json      # if you want to test outside of MCollective 
 gem install uuidtools # if you want to test outside of MCollective
 
@@ -32,4 +38,4 @@ mco rpc scheduler schedule agentname='package' actionname='status' params=packag
 
 mco rpc scheduler schedule agentname='package' actionname='status' params=package package=ruby schedtype=in schedarg='60s' --with-id=/el6/ --verbose
 
-mco rpc scheduler query --verbose jobid=xyz
+mco rpc scheduler query output=yes --verbose jobid=xyz
