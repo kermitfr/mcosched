@@ -1,0 +1,35 @@
+- Installation 
+As root :
+
+gem install tzinfo
+gem install eventmachine
+gem install rufus-scheduler
+gem install json      # if you want to test outside of MCollective 
+gem install uuidtools # if you want to test outside of MCollective
+
+cp mcoplugins/agent/scheduler.rb /usr/libexec/mcollective/mcollective/agent/
+mkdir -p /usr/libexec/mcollective/mcollective/util/
+cp mcoplugins/util/schedhandler.rb /usr/libexec/mcollective/mcollective/util/
+
+/sbin/service mcollective restart
+
+./schedulerd run   # to test if everything is fine
+./schedulerd start # when everyting is fine
+./schedulerd status
+
+- Examples of use :
+mco rpc scheduler schedule agentname='rpcutil' actionname='ping' --with-id=/el6/ --verbose
+
+mco rpc scheduler schedule agentname='rpcutil' actionname='ping' schedtype=in schedarg='60s' --with-id=/el6/ --verbose
+
+mco rpc scheduler schedule agentname='package' actionname='yum_clean' --with-id=/el6/ --verbose
+
+mco rpc scheduler schedule agentname='package' actionname='yum_checkupdates' --with-id=/el6/ --verbose
+
+mco rpc scheduler schedule agentname='sleep'   actionname='sleepy' params=seconds seconds=120 --with-id=/el6/ --verbose
+
+mco rpc scheduler schedule agentname='package' actionname='status' params=package package=ruby --with-id=/el6/ --verbose
+
+mco rpc scheduler schedule agentname='package' actionname='status' params=package package=ruby schedtype=in schedarg='60s' --with-id=/el6/ --verbose
+
+mco rpc scheduler query --verbose jobid=xyz

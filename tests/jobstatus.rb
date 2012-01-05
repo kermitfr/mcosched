@@ -2,30 +2,19 @@
 require 'rubygems'
 require "eventmachine"
 require 'json'
+require 'pp'
 
 usock = '/tmp/sched.sock'
 
-unless ARGV[0]
-  puts 'Please provide a job id'
-  exit
-end
+(puts 'Please provide a job id'; exit) unless ARGV[0]
 
-jobrequest = {
-               :reqtype     => :status,
-               :job_id      => ARGV[0],
-             }
+jobrequest = { :reqtype => :status, :job_id => ARGV[0] }
 
-#class Handler < EM::Connection
 module Handler
   def initialize(msg); @msg = msg; end
-
-  def post_init; send_data(@msg); end
-
-  def receive_data(response)
-    puts response
-  end
-
-  def unbind; EM.stop; end
+  def post_init; send_data(@msg) end
+  def receive_data(response); puts response end
+  def unbind; EM.stop end
 end
 
 EM.run {

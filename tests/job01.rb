@@ -10,14 +10,12 @@ job_id = UUIDTools::UUID.random_create.to_s
 
 jobrequest = {
                :reqtype     => :add,
-               :module_file => 'fib',
-               :module_name => 'Fib',
-               :method_name => 'fib',
-               :method_args => { 'iterations' => 350 },
+               :agent_name  => 'rpcutil',
+               :action_name => 'ping',
+               :action_args => nil,
                :job_id      => job_id,
                :job_type    => :in,
                :job_arg     => '0s',
-               :job_options => nil,
              }
 
 #class Handler < EM::Connection
