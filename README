@@ -1,5 +1,5 @@
 - Installation 
-git clone https://github.com/thinkfr/mcosched.git
+git clone git://github.com/thinkfr/mcosched.git 
 
 sudo su
 
