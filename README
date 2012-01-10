@@ -13,6 +13,7 @@ gem install daemons
 gem install json      # if you want to test outside of MCollective 
 gem install uuidtools # if you want to test outside of MCollective
 
+# On the managed nodes :
 cp mcoplugins/agent/scheduler.rb /usr/libexec/mcollective/mcollective/agent/
 mkdir -p /usr/libexec/mcollective/mcollective/util/
 cp mcoplugins/util/schedhandler.rb /usr/libexec/mcollective/mcollective/util/
@@ -23,7 +24,23 @@ cp mcoplugins/util/schedhandler.rb /usr/libexec/mcollective/mcollective/util/
 ./schedulerd start # when everyting is fine
 ./schedulerd status
 
-- Examples of use :
+# On the client (management) node(s) :
+cp mcoplugins/application/schedule.rb /usr/libexec/mcollective/mcollective/application
+
+
+- Examples of use (CLI wrapper):
+mco schedule rpcutil ping --with-id=/el6/
+mco schedule rpcutil ping -s in -a 60s --with-id=/el6/
+mco schedule package yum_clean --with-id=/el6/
+mco schedule package yum_checkupdates --with-id=/el6/
+mco schedule sleep sleepy seconds=120 --with-id=/el6/
+mco schedule package status package=ruby --with-id=/el6/
+mco schedule package status package=ruby -s in -a 60s --with-id=/el6/
+
+mco schedule -o -j <jobid> --with-id=/el6/
+
+
+- Examples of use (raw agent):
 mco rpc scheduler schedule agentname='rpcutil' actionname='ping' --with-id=/el6/ --verbose
 
 mco rpc scheduler schedule agentname='rpcutil' actionname='ping' schedtype=in schedarg='60s' --with-id=/el6/ --verbose
@@ -39,3 +56,4 @@ mco rpc scheduler schedule agentname='package' actionname='status' params=packag
 mco rpc scheduler schedule agentname='package' actionname='status' params=package package=ruby schedtype=in schedarg='60s' --with-id=/el6/ --verbose
 
 mco rpc scheduler query output=yes --verbose jobid=xyz
+
