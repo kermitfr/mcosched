@@ -20,9 +20,15 @@ cp mcoplugins/util/schedhandler.rb /usr/libexec/mcollective/mcollective/util/
 
 /sbin/service mcollective restart
 
-./schedulerd run   # to test if everything is fine
-./schedulerd start # when everyting is fine
-./schedulerd status
+./schedulerd run   # to test if it does not complain, then : 
+
+mkdir -p /usr/local/bin
+cp schedulerd /usr/local/bin
+cp service/schedulerd /etc/init.d/
+
+/sbin/chkconfig schedulerd on
+/sbin/service schedulerd start
+/sbin/service schedulerd status
 
 # On the client (management) node(s) :
 cp mcoplugins/application/schedule.rb /usr/libexec/mcollective/mcollective/application

@@ -1,0 +1,102 @@
+#!/bin/sh
+#
+# schedulerd      A very basic scheduler for MCollective jobs
+#
+# chkconfig: - 95 5
+# description:  A very basic scheduler for MCollective jobs
+#
+
+### BEGIN INIT INFO
+# Provides:          schedulerd 
+# Required-Start:    $network
+# Required-Stop:     $network
+# Description:       Job scheduler for MCollective 
+# Short-Description: Schedules actions from MCollective agents 
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+NAME=schedulerd
+CONTROL=/usr/local/bin/${NAME}
+DESC=schedulerd
+ROTATE_SUFFIX=
+
+LOCK_FILE=/var/lock/subsys/$NAME
+
+RETVAL=0
+set -e
+
+start_sched () {
+    set +e
+    OUTPUT=$($CONTROL start) 
+    echo $OUTPUT | grep -q 'ERROR' 
+    STARTSTATUS=$?
+    set -e
+    case "$STARTSTATUS" in
+        1)
+            echo SUCCESS
+            if [ -n "$LOCK_FILE" ] ; then
+                touch $LOCK_FILE
+            fi
+            RETVAL=0
+            ;;
+        *)
+            echo FAILED
+            echo $OUTPUT
+            RETVAL=1
+            ;;
+    esac
+}
+
+stop_sched () {
+        set +e
+        $CONTROL stop
+        RETVAL=$?
+        set -e
+        if [ $RETVAL = 0 ] ; then
+            echo SUCCESS
+            if [ -n "$LOCK_FILE" ] ; then
+                rm -f $LOCK_FILE
+            fi
+        else
+            echo FAILED
+        fi
+}
+
+status_sched() {
+    set +e
+    OUTPUT=$($CONTROL status)
+    echo $OUTPUT | grep -q 'no instances running' 
+    if [ $? = 0 ] ; then
+        RETVAL=3
+    fi
+    echo $OUTPUT
+    set -e
+}
+
+restart_sched() {
+    stop_sched
+    start_sched
+}
+
+case "$1" in
+    start)
+        echo -n "Starting $DESC: "
+        start_sched
+        ;;
+    stop)
+        echo -n "Stopping $DESC: "
+        stop_sched
+        ;;
+    restart)
+        restart_sched
+        ;;
+    status)
+        status_sched
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}" >&2
+        RETVAL=1
+        ;;
+esac
+
+exit $RETVAL
