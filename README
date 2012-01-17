@@ -23,8 +23,8 @@ cp mcoplugins/util/schedhandler.rb /usr/libexec/mcollective/mcollective/util/
 ./schedulerd run   # to test if it does not complain, then : 
 
 mkdir -p /usr/local/bin
-cp schedulerd /usr/local/bin
-cp service/schedulerd /etc/init.d/
+cp -f schedulerd sched.rb lib/mc-debugger-tk.rb /usr/local/bin
+cp -f service/schedulerd /etc/init.d/
 
 /sbin/chkconfig schedulerd on
 /sbin/service schedulerd start
