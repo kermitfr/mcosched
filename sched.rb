@@ -96,8 +96,11 @@ module Runner
         # Already loaded ?
       end
       j['action_args'].symbolize_keys!
-      res = McDebugger.call(j['agent_name'], j['action_name'], j['action_args'])
-      log_out(j['job_id'],res)
+      pid=fork do
+          res = McDebugger.call(j['agent_name'], j['action_name'], j['action_args'])
+          log_out(j['job_id'],res)
+      end
+      Process.wait(pid)
     end
   end
 
