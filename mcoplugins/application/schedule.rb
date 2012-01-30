@@ -77,10 +77,14 @@ class MCollective::Application::Schedule<MCollective::Application
                 jobreq[:output]='yes'
             end
             sched.query(jobreq).each do |resp|
-                printf("%-40s state=%s\n", resp[:sender], resp[:data][:state])
-                if configuration[:output]
-                    pp resp[:data]
-                    puts
+                if resp[:data]
+                  printf("%-40s state=%s\n", resp[:sender], resp[:data][:state])
+                  if configuration[:output]
+                      pp resp[:data]
+                      puts
+                  end
+                else
+                  printf("%-40s state=%s\n", resp[:sender], 'no response')
                 end
             end
         else
