@@ -41,7 +41,7 @@ fname=ARGV[0]
 
 fic=File.open(fname, 'r')
 
-json = fic.readlines.to_s
+json = fic.read
 job = JSON.parse(json)
 
 jobargs = job['action_args'].symbolize_keys!
