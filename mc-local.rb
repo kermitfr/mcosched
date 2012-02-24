@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 require 'pp'
 
 callpath = File.expand_path(File.dirname(__FILE__))
@@ -21,3 +21,4 @@ pp McLocal.call('rpcutil', 'ping')
 #pp McLocal.call('package', 'yum_clean')
 #pp McLocal.call('rpcutil', 'inventory')
 #pp McLocal.call('package', 'yum_checkupdates')
+#pp McLocal.call('nodeinfo', 'basicinfo')
