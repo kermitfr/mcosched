@@ -1,7 +1,8 @@
-require "eventmachine"
+#require "eventmachine"
 require 'json'
+require 'socket'
 
-MCollective::Util.loadclass("MCollective::Util::SchedHandler")
+#MCollective::Util.loadclass("MCollective::Util::SchedHandler")
 
 module MCollective
     module Agent 
@@ -15,7 +16,7 @@ module MCollective
                      :timeout     => 10
 
             @@jobpath = '/tmp/sched'
-            @@usock   = '/tmp/sched.sock'                
+            @@usock   = '/var/run/sched.sock'                
 
             action "schedule" do
                 validate :agentname, String
@@ -71,11 +72,14 @@ module MCollective
             private
 
             def send_request(jobrequest)
-              EM.run {
-                EM.connect_unix_domain(@@usock,
-                                       MCollective::Util::SchedHandler,
-                                       jobrequest.to_json)
-              }
+              s = UNIXSocket.new(@@usock)
+              s.puts(jobrequest.to_json)
+              s.close
+              #EM.run {
+              #  EM.connect_unix_domain(@@usock,
+              #                         MCollective::Util::SchedHandler,
+              #                         jobrequest.to_json)
+              #}
             end
 
             def lock_n_read(filename)
