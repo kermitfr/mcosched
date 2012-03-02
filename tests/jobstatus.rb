@@ -10,7 +10,6 @@ usock = '/var/run/sched.sock'
 jobrequest = { :reqtype => :status, :job_id => ARGV[0] }
 
 s = UNIXSocket.new(usock)
-#s = TCPSocket.new('localhost',942)
 
 s.puts(jobrequest.to_json)
 while line = s.gets
