@@ -1,0 +1,112 @@
+#!/bin/sh
+#
+# schedulerd    A very basic scheduler for MCollective jobs 
+#
+# description:  A very basic scheduler for MCollective jobs 
+#
+#
+#
+
+#RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
+RUBYLIB=/usr/local/lib/ruby/site_ruby/1.9.1:$RUBYLIB
+export RUBYLIB
+
+schedulerd="/usr/local/bin/schedulerd"
+pidfile="/tmp/schedulerd.pid"
+
+# define some generic commands
+AWK=/usr/bin/awk
+CAT=/usr/bin/cat
+ECHO=/usr/bin/echo
+GREP=/usr/bin/grep
+KILL=/usr/bin/kill
+MKDIR=/usr/bin/mkdir
+PRINTF=/usr/bin/printf
+PS=/usr/bin/ps
+RM=/usr/bin/rm
+
+
+# Check that binary exists
+if ! [ -f $schedulerd ]; then
+    $ECHO "$schedulerd binary not found"
+    exit 0
+fi
+
+
+start()
+{
+    if [ -r ${pidfile} ]; then
+        pid=`$CAT ${pidfile}`
+        if [ "`$PS -ef | $GREP -v grep | $GREP schedulerd | $GREP ${pid} | $AWK '{ print $2 }'`" = "${pid}" ] ; then
+            $ECHO "The scheduler daemon is already running with PID ${pid}."
+            exit 1
+        else
+            $RM -f ${pidfile}
+        fi
+    fi
+    $PRINTF "Starting the scheduler... "
+    ruby ${schedulerd} start
+    RETVAL=$?
+    $ECHO "done."
+    return $RETVAL
+}
+
+# 'stop' is a command on AIX
+schedstop() {
+    $PRINTF "Shutting down the scheduler: "
+    RETVAL=1
+    if [ -r ${pidfile} ]; then
+        #$KILL -KILL `$CAT ${pidfile}`
+        ruby ${schedulerd} stop
+        RETVAL=$?
+    fi
+    if [ $RETVAL -eq 0 ];then
+        $RM -f ${pidfile}
+        $ECHO "done."
+    else
+        $ECHO "nothing to stop"
+    fi
+    return $RETVAL
+}
+
+restart() {
+    schedstop
+    start
+}
+
+status() {
+    if [ -r ${pidfile} ]; then
+        pid=`$CAT ${pidfile}`
+        if [ "`$PS -ef | $GREP -v grep | $GREP schedulerd | $GREP ${pid} | $AWK '{ print $2 }'`" = "${pid}" ] ; then
+            $ECHO "The scheduler daemon is running with PID ${pid}."
+        else
+            $ECHO "Daemon dead but pidfile exists"
+            $ECHO ${pidfile}
+        fi
+    else
+        $ECHO "The scheduler daemon is not running."
+        exit 1
+    fi
+}
+
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        schedstop
+        ;;
+    restart)
+        restart
+        ;;
+    status)
+        status
+        ;;
+    *)
+        echo "Usage: schedulerd {start|stop|restart|status}"
+        RETVAL=2
+        ;;
+esac
+exit $RETVAL
