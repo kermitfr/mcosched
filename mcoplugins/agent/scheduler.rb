@@ -1,7 +1,7 @@
-#require "eventmachine"
 require 'json'
 require 'socket'
 
+#require "eventmachine"
 #MCollective::Util.loadclass("MCollective::Util::SchedHandler")
 
 module MCollective
@@ -54,9 +54,7 @@ module MCollective
                    :job_id      => request[:jobid],
                 }
 
-                send_request(jobrequest)
-
-                reply[:state] = $state
+                reply[:state] = send_request(jobrequest)
 
                 if request[:output] && reply[:state] == "finished"
                   output = get_job_output(request[:jobid])
@@ -74,10 +72,15 @@ module MCollective
             def send_request(jobrequest)
               s = UNIXSocket.new(@@usock)
               s.puts(jobrequest.to_json)
+              resp = ''
+              while line = s.gets
+                       resp = line
+                       break # 1st line
+              end
               s.close
+              resp.chomp
               #EM.run {
-              #  EM.connect_unix_domain(@@usock,
-              #                         MCollective::Util::SchedHandler,
+              #  EM.connect_unix_domain(@@usock,MCollective::Util::SchedHandler,
               #                         jobrequest.to_json)
               #}
             end
