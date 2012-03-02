@@ -3,6 +3,7 @@ require 'rubygems'
 require 'rufus-scheduler'
 require 'json'
 require 'socket'
+require 'timeout'
 
 callpath = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH << callpath
@@ -30,10 +31,16 @@ module Runner
   module_function
 
   def lock_n_write(filename, msg)
-    (f= File.open(filename, 'w')).flock(File::LOCK_EX)
-    f.write(msg)
-    f.flock(File::LOCK_UN)
-    f.close
+    begin
+      Timeout::timeout(3) do
+        (f = File.open(filename, 'w')).flock(File::LOCK_EX)
+        f.write(msg)
+        f.flock(File::LOCK_UN)
+        f.close
+      end
+    rescue Timeout::Error
+      File.open(filename,'w') { |f| f.write(msg) }
+    end
   end
 
   def load_scheduler

@@ -86,11 +86,11 @@ module MCollective
             end
 
             def lock_n_read(filename)
-              output = ''
-              3.times do
-                opened = (f= File.open(filename, 'r')).flock(File::LOCK_EX| File::LOCK_NB)
+              output=JSON.dump({:error => 'status file locked'})
+              2.times do
+                opened = (f= File.open(filename, 'r')).flock(File::LOCK_SH|File::LOCK_NB)
                 if opened
-                  output=f.read
+                  output = f.read
                   f.flock(File::LOCK_UN)
                   f.close
                   break
