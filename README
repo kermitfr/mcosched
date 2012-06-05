@@ -43,7 +43,7 @@ mco schedule sleep sleepy seconds=120 --with-id=/el6/
 mco schedule package status package=ruby --with-id=/el6/
 mco schedule package status package=ruby -s in -a 60s --with-id=/el6/
 
-mco schedule -o -j <jobid> --with-id=/el6/
+mco schedule -o -k <jobid> --with-id=/el6/
 
 
 - Examples of use (raw agent):

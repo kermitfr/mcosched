@@ -17,7 +17,7 @@ class MCollective::Application::Schedule<MCollective::Application
 
     option :query,
            :description    => "Query a job id",
-           :arguments      => ["-j", "--jobid JOBID"],
+           :arguments      => ["-k", "--jobid JOBID"],
            :type           => String,
            :required       => false 
 
