@@ -15,6 +15,7 @@ gem install uuidtools # if you want to test outside of MCollective
 
 # On the managed nodes :
 cp mcoplugins/agent/scheduler.rb /usr/libexec/mcollective/mcollective/agent/
+cp mcoplugins/agent/scheduler.ddl /usr/libexec/mcollective/mcollective/agent/
 mkdir -p /usr/libexec/mcollective/mcollective/util/
 cp mcoplugins/util/schedhandler.rb /usr/libexec/mcollective/mcollective/util/
 
