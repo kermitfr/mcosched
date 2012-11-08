@@ -7,14 +7,6 @@ require 'socket'
 module MCollective
     module Agent 
         class Scheduler<RPC::Agent
-            metadata :name        => "Part of a POC for a mco scheduler",
-                     :description => "Pass an agent+action to a scheduler that runs it locally",
-                     :author      => "Louis Coilliot",
-                     :license     => "",
-                     :version     => "1.0",
-                     :url         => "http://kermit.fr",
-                     :timeout     => 10
-
             @@jobpath = '/tmp/sched'
             @@usock   = '/var/run/sched.sock'                
 
